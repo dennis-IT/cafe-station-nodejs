@@ -1,0 +1,41 @@
+<main>
+    <div class="home-body-first">
+        {{#each categories}}
+        <div class="category">
+            <a href="/menu/{{name}}">
+                <img src="/images/{{imgPath}}" alt="{{name}}">
+                <div class="category-info">{{name}}</div>
+            </a>
+        </div>
+        {{/each}}
+    </div>
+
+    <section class="menu-body">
+        {{#if drinks}}
+        <div class="side-bar">
+            <ul class="side-bar-list">
+                {{#each categories_sort}}
+                <li class="side-bar-item"><a href="/menu/{{name}}" class="side-bar-link">{{name}}</a></li>
+                {{/each}}
+            </ul>
+        </div>
+
+        <div class="menu">
+            <div class="menu-header" id="menu-header">{{category}}</div>
+            <div class="menu-list">
+                {{#each drinks}}
+                <div class="menu-item">
+                    <a href="/menu/{{category}}/{{url}}" class="menu-item-image"><img src="/images/{{imgPath}}"
+                            alt="{{name}}"></a>
+                    <div class="menu-item-info">
+                        <div class="menu-item-title">{{name}}</div>
+                        <div class="menu-item-description">{{description}}</div>
+                        <div class="menu-item-price">${{price}}</div>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+        {{/if}}
+    </section>
+</main>

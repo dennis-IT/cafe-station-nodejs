@@ -1,0 +1,21 @@
+<main>
+    <div class="item-container">
+        {{#each drinks}}
+        <div class="item-description">
+            <div class="item-image">
+                <img src="/images/{{imgPath}}" alt="{{name}}">
+            </div>
+            <div class="item-info">
+                <p class="title">{{name}}</p>
+                <p class="price">${{price}}</p>
+                <p class="intro">{{description}}</p>
+                <p class="category">Category: {{category}}</p>
+                <form action="" method="POST">
+                    <input id="orderedQuantity" name="orderedQuantity" type="number" min="1" value="1">
+                    <div><button type="submit">Add to Order</button></div>
+                </form>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</main>

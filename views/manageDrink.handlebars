@@ -1,0 +1,45 @@
+<main>
+    <div class="container">
+        <h3>List of Drinks
+            <a href="/manage/drink/add" class="btn btn-secondary float-right text-white font-weight-bold">Add New
+                Drink</a>
+        </h3>
+        <hr>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="">Image</th>
+                        <th style="">Name</th>
+                        <th style="">Price</th>
+                        <th style="">Description</th>
+                        <th style="">Category</th>
+                        <th style="">Bestseller</th>
+                        <th style=""></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#if drinks}}
+                    {{#each drinks}}
+                    <tr>
+                        <td class="td-image"><img src="/images/{{imgPath}}" alt={{name}} class="drink-image"></td>
+                        <td class="text-capitalize">{{name}}</td>
+                        <td>{{price}}</td>
+                        <td>{{description}}</td>
+                        <td>{{category}}</td>
+                        <td>{{bestseller}}</td>
+                        <td><a href="/manage/drink/update/{{url}}"
+                                class="btn btn-warning float-left text-white font-weight-bold">Update</a></td>
+                        <td><a href="/manage/drink/delete/{{url}}"
+                                class="btn btn-danger float-left text-white font-weight-bold">Remove</a></td>
+                    </tr>
+                    {{/each}}
+                    {{/if}}
+                </tbody>
+            </table>
+            {{#unless drinks}}
+            <div class="col-md-12 text-center">No result</div>
+            {{/unless}}
+        </div>
+    </div>
+</main>

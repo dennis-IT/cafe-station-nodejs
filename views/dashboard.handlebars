@@ -1,0 +1,33 @@
+<main>
+    <section class="menu-body dashboard-body">
+        <div class="side-bar">
+            <ul class="dashboard-side-bar">
+                {{#if isAdmin}}
+                <li class="dashboard-side-bar-item"><a href="/manage/category"
+                        class="side-bar-link dashboard-side-bar-link">Manage Categories</a></li>
+                <li class="dashboard-side-bar-item"><a href="/manage/drink"
+                        class="side-bar-link dashboard-side-bar-link">Manage Drinks</a></li>
+                {{/if}}
+                <li class="dashboard-side-bar-item"><a href="/users/logout"
+                        class="side-bar-link dashboard-side-bar-link">Logout</a></li>
+            </ul>
+        </div>
+
+        <div class="dashboard-content">
+            <h3 class="dashboard-title">Hello {{fname}},</h3>
+            <h3 class="dashboard-subtitle">Welcome to Café Station Dashboard</h3>
+            <h3 class="dashboard-subtitle">Your profile</h3>
+
+            <div class="dashboard-table">
+                <div>First Name:</div>
+                <div>{{fname}}</div>
+                <div>Last Name:</div>
+                <div>{{lname}}</div>
+                <div>Email:</div>
+                <div>{{email}}</div>
+                <div>Status:</div>
+                <div>{{status}}</div>
+            </div>
+        </div>
+    </section>
+</main>

@@ -1,0 +1,37 @@
+<main>
+    <div class="register-container">
+        <div class="register-form">
+            <h1><i class="fas fa-sign-in-alt"></i> Register</h1>
+
+            {{#each errorMessages}}
+            <div class="error-message">{{this}}</div>
+            {{/each}}
+
+            {{#unless successMessage}}
+            <form action="/users/register" method="POST" novalidate>
+                <label for="fname">First Name</label>
+                <input type="name" id="fname" name="fname" placeholder="Enter First Name" value="{{fname}}" />
+
+                <label for="lname">Last Name</label>
+                <input type="name" id="lname" name="lname" placeholder="Enter Last Name" value="{{lname}}" />
+
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter Email" value="{{email}}" />
+
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter Password"
+                    value="{{password}}" />
+
+                <label for="password2">Confirm Password</label>
+                <input type="password" id="password2" name="password2" placeholder="Confirm Password"
+                    value="{{password2}}" />
+
+                <button class="form-btn" type="submit" name="register">Register</button>
+            </form>
+            {{else}}
+            <div class="success-message"><b>Success:</b> {{successMessage}}</div>
+            <div class="tologin"><a href="/users/login">Click to Login</a></div>
+            {{/unless}}
+        </div>
+    </div>
+</main>

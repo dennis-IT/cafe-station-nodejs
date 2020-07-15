@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} | Café Station</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+<body>
+    <div class="home-container">
+        <header>
+            <div class="navigation">
+                <div class="nav-logo"><a href="/">Café Station</a></div>
+                <div class="nav-menu">
+                    <ul>
+                        <li><a href="/" class="nav-menu-item"><i class="fas fa-home"></i><span>HOME</span></a></li>
+                        <li><a href="/menu" class="nav-menu-item"><i class="far fa-list-alt"></i><span>MENU</span></a>
+                        </li>
+
+                        {{#if userId}}
+                        <li class="login logged dropdown">
+                            <a href="#" class="nav-menu-item user-logged">{{email}}</a>
+                            <div class="dropdown-content">
+                                <a href="/users/dashboard">Dashboard</a>
+                                <a href="/users/logout">Logout</a>
+                            </div>
+                        </li>
+                        {{else}}
+                        <li class="register"><a href="/users/register" class="nav-menu-item"><i
+                                    class="fas fa-cog"></i><span>REGISTER</span></a>
+                        </li>
+                        <li class="login"><a href="/users/login" class="nav-menu-item"><i
+                                    class="fas fa-sign-in-alt"></i><span>LOGIN</span></a>
+                        </li>
+                        {{/if}}
+                    </ul>
+                </div>
+                <div class="nav-toggle"><a href="#"><i class="fas fa-bars"></i></a></div>
+            </div>
+        </header>
+
+        {{{body}}}
+
+        <footer>
+            <div class="social-icon">
+                <ul>
+                    <li><a href="https://www.facebook.com/"><i class="fab fa-facebook-f"></i></a></li>
+                    <li><a href="https://www.pinterest.com/"><i class="fab fa-pinterest-p"></i></a></li>
+                    <li><a href="https://www.instagram.com/"><i class="fab fa-instagram"></i></a></li>
+                    <li><a href="https://twitter.com/"><i class="fab fa-twitter"></i></a></li>
+                    <li><a href="https://www.youtube.com/"><i class="fab fa-youtube"></i></a></li>
+                </ul>
+            </div>
+
+            <div class="nav-footer">
+                <ul>
+                    <li><a href="/" class="">HOME</a></li>
+                    <li><a href="/menu" class="">MENU</a></li>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="newsletter">
+                <div class="newsletter-title">SIGN UP FOR NEWSLETTER</div>
+                <div class="newsletter-subtitle">Want the latest promotion and menu from us? Subscribe and get a sweet
+                    weekly update.</div>
+                <form action="https://formspree.io/xyyprvep" method="post" class="newsletter-form">
+                    <div>
+                        <input class="newsletter-email" type="email" name="email" placeholder="Your Email" required>
+                    </div>
+                    <div class="buttons">
+                        <button type="submit" class="newsletter-button" name="submit" value="Subscribe">
+                            <i class="fas fa-arrow-circle-right"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="copyright">
+                <p>&copy; 2020 Quang Huy Ta. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://kit.fontawesome.com/cdeaebf6e2.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+    <script src="/js/script.js"></script>
+
+</body>
+
+</html>

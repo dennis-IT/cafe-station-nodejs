@@ -1,0 +1,38 @@
+<main>
+  <section class="banner">
+    <div class="banner-content">
+      <h2 class="banner-title">Welcome to Café Station</h2>
+      <p class="banner-intro">
+        "We serve the best Arabica and Robusta originated from our farm in Vietnam.<br>
+        At Café Station,<br>our priority is your satisfaction."
+      </p>
+      <div class="banner-button"><a href="/menu">Explore Our Menu</a></div>
+    </div>
+  </section>
+
+  <section class="home-body">
+    <div class="home-body-title">All Categories</div>
+    <div class="home-body-first">
+      {{#each categories}}
+      <div class="category">
+        <a href="/menu/{{name}}">
+          <img src="/images/{{imgPath}}" alt="{{name}}">
+          <div class="category-info">{{name}}</div>
+        </a>
+      </div>
+      {{/each}}
+    </div>
+    <div class="home-body-title">Our Top Drinks</div>
+    <div class="home-body-second">
+      {{#each bestsellers}}
+      <div class="top-drink">
+        <a href="/menu/{{category}}/{{url}}" class="top-drink-image"><img src="/images/{{imgPath}}" alt="{{name}}"></a>
+        <div class="top-drink-info">
+          <div class="top-drink-name">{{name}}</div>
+          <div class="top-drink-price">${{price}}</div>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+  </section>
+</main>
