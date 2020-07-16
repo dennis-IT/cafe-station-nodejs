@@ -1,4 +1,5 @@
 const serviceAuth = require('./serviceAuth');
+const dataHelper = require('./dataHelper');
 const User = require('../model/user');
 const Category = require('../model/category');
 const Drink = require('../model/drink');
@@ -11,11 +12,10 @@ const router = express.Router();
 const storage = multer.diskStorage({
     destination: "./public/images/",
     filename: (req, file, cb) => {
-        cb(null, req.body.itemName.toLowerCase().replace(/ /, '-') + path.extname(file.originalname));
+        cb(null, Date.now() + path.extname(file.originalname));
     }
 });
 
-// Tell multer to use the diskStorage function for naming files instead of the default.
 const upload = multer({
     storage: storage,
     fileFilter: (req, file, cb) => {
@@ -73,7 +73,7 @@ router.get('/drink/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, async
     });
 });
 
-router.post('/category/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, upload.single("imageFile"), async (req, res) => {
+router.post('/category/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, upload.single("imageFile"), dataHelper.imageResizer, async (req, res) => {
     req.body.userAgent = req.get('User-Agent');
     let users = await User.find({ email: req.session.userId }).lean();
     const errors = [];
@@ -111,7 +111,7 @@ router.post('/category/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, u
                     });
                 } else {
                     const category = new Category({
-                        imgPath: itemName.toLowerCase() + path.extname(req.file.originalname),
+                        imgPath: itemName.toLowerCase().replace(/ /, '-') + path.extname(req.file.originalname),
                         name: itemName.toLowerCase()
                     });
 
@@ -134,7 +134,7 @@ router.post('/category/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, u
     }
 });
 
-router.post('/drink/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, upload.single("imageFile"), async (req, res) => {
+router.post('/drink/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, upload.single("imageFile"), dataHelper.imageResizer, async (req, res) => {
     req.body.userAgent = req.get('User-Agent');
     let users = await User.find({ email: req.session.userId }).lean();
     let categories = await Category.find().lean();
@@ -261,9 +261,5 @@ router.get('/drink/update/:drink', serviceAuth.verifyLogin, serviceAuth.verifyAd
         email: (users.length !== 0) ? users[0].email : ''
     });
 });
-
-
-
-
 
 module.exports = router;
