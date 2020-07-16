@@ -139,6 +139,7 @@ router.post('/drink/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, uplo
     let users = await User.find({ email: req.session.userId }).lean();
     let categories = await Category.find().lean();
     let topdrink;
+    let unhide = false;
     const errors = [];
     const { itemName, drinkPrice, drinkDesc, drinkCat, drinkBest } = req.body;
 
@@ -156,10 +157,14 @@ router.post('/drink/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, uplo
         }
     }
 
-    if (drinkBest === "true") {
-        topdrink = true;
-    } else {
-        topdrink = false;
+    if (drinkBest !== '') {
+        if (drinkBest === "true") {
+            topdrink = true;
+            unhide = true;
+        } else {
+            topdrink = false;
+            unhide = true;
+        }
     }
 
     if (errors.length > 0) {
@@ -173,6 +178,7 @@ router.post('/drink/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, uplo
             drinkDesc: drinkDesc,
             drinkCat: drinkCat,
             drinkBest: drinkBest,
+            unhide: unhide,
             userId: (users.length !== 0) ? users[0].email : req.session.userId,
             email: (users.length !== 0) ? users[0].email : ''
         });
@@ -202,6 +208,7 @@ router.post('/drink/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, uplo
                     drinkDesc: drinkDesc,
                     drinkCat: drinkCat,
                     drinkBest: drinkBest,
+                    unhide: unhide,
                     drinkImage: req.file.originalname,
                     userId: (users.length !== 0) ? users[0].email : req.session.userId,
                     email: (users.length !== 0) ? users[0].email : ''
@@ -257,9 +264,173 @@ router.get('/drink/update/:drink', serviceAuth.verifyLogin, serviceAuth.verifyAd
         drinkCat: drink.category,
         drinkBest: drink.bestseller,
         drinkImage: drink.imgPath,
+        drinkId: drink._id,
         userId: (users.length !== 0) ? users[0].email : req.session.userId,
         email: (users.length !== 0) ? users[0].email : ''
     });
+});
+
+router.post('/drink/update', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, upload.single("imageFile"), dataHelper.imageResizer, async (req, res) => {
+    req.body.userAgent = req.get('User-Agent');
+    let users = await User.find({ email: req.session.userId }).lean();
+    let categories = await Category.find().lean();
+    let topdrink;
+    let unhide = false;
+    const errors = [];
+    const { itemName, drinkPrice, drinkDesc, drinkCat, drinkBest, drinkId, drinkImage } = req.body;
+
+    if (itemName == "" || drinkPrice == "" || drinkDesc == "" || drinkCat == "" || drinkBest == "") {
+        errors.push("Please fill in all fields");
+    }
+
+    if (!req.file) {
+        errors.push("No file received or invalid image file type");
+    }
+
+    for (let i = 0; i < categories.length; i++) {
+        if (categories[i].name == drinkCat) {
+            categories[i].selected = true;
+        }
+    }
+
+    if (drinkBest !== '') {
+        if (drinkBest === "true") {
+            topdrink = true;
+            unhide = true;
+        } else {
+            topdrink = false;
+            unhide = true;
+        }
+    }
+
+    if (errors.length > 0) {
+        res.render('updateDrink', {
+            title: 'Update Drink',
+            errorMessages: errors,
+            categories: categories,
+            topdrink: topdrink,
+            drinkName: itemName,
+            drinkPrice: drinkPrice,
+            drinkDesc: drinkDesc,
+            drinkCat: drinkCat,
+            drinkBest: drinkBest,
+            drinkId: drinkId,
+            drinkImage: drinkImage,
+            unhide: unhide,
+            userId: (users.length !== 0) ? users[0].email : req.session.userId,
+            email: (users.length !== 0) ? users[0].email : ''
+        });
+    } else {
+        let drink = {
+            name: itemName,
+            imgPath: itemName.toLowerCase().replace(/ /, '-') + path.extname(req.file.originalname),
+            description: drinkDesc,
+            category: drinkCat,
+            price: drinkPrice,
+            bestseller: drinkBest,
+            url: itemName.toLowerCase().replace(/ /, '-')
+        }
+
+        Drink.findByIdAndUpdate(drinkId, drink).then(() => {
+            res.redirect('/manage/drink');
+        }).catch(err => {
+            res.render('manageDrink', {
+                title: 'Update Drink',
+                errorMessages: [err],
+                categories: categories,
+                topdrink: topdrink,
+                drinkName: itemName,
+                drinkPrice: drinkPrice,
+                drinkDesc: drinkDesc,
+                drinkCat: drinkCat,
+                drinkBest: drinkBest,
+                drinkId: drinkId,
+                drinkImage: drinkImage,
+                unhide: unhide,
+                userId: (users.length !== 0) ? users[0].email : req.session.userId,
+                email: (users.length !== 0) ? users[0].email : ''
+            });
+        });
+    }
+});
+
+router.post('/drink/update-no-image', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, async (req, res) => {
+    req.body.userAgent = req.get('User-Agent');
+    let users = await User.find({ email: req.session.userId }).lean();
+    let categories = await Category.find().lean();
+    let topdrink;
+    let unhide = false;
+    const errors = [];
+    const { itemName, drinkPrice, drinkDesc, drinkCat, drinkBest, drinkId, drinkImage } = req.body;
+
+    if (itemName == "" || drinkPrice == "" || drinkDesc == "" || drinkCat == "" || drinkBest == "") {
+        errors.push("Please fill in all fields");
+    }
+
+    for (let i = 0; i < categories.length; i++) {
+        if (categories[i].name == drinkCat) {
+            categories[i].selected = true;
+        }
+    }
+
+    if (drinkBest !== '') {
+        if (drinkBest === "true") {
+            topdrink = true;
+            unhide = true;
+        } else {
+            topdrink = false;
+            unhide = true;
+        }
+    }
+
+    if (errors.length > 0) {
+        res.render('updateDrink', {
+            title: 'Update Drink',
+            errorMessages: errors,
+            categories: categories,
+            topdrink: topdrink,
+            drinkName: itemName,
+            drinkPrice: drinkPrice,
+            drinkDesc: drinkDesc,
+            drinkCat: drinkCat,
+            drinkBest: drinkBest,
+            drinkId: drinkId,
+            drinkImage: drinkImage,
+            unhide: unhide,
+            userId: (users.length !== 0) ? users[0].email : req.session.userId,
+            email: (users.length !== 0) ? users[0].email : ''
+        });
+    } else {
+        let drink = {
+            name: itemName,
+            description: drinkDesc,
+            category: drinkCat,
+            price: drinkPrice,
+            bestseller: drinkBest,
+            url: itemName.toLowerCase().replace(/ /, '-')
+        }
+
+        Drink.findByIdAndUpdate(drinkId, drink).then(() => {
+            res.redirect('/manage/drink');
+        }).catch(err => {
+            res.render('manageDrink', {
+                title: 'Update Drink',
+                errorMessages: [err],
+                categories: categories,
+                topdrink: topdrink,
+                drinkName: itemName,
+                drinkPrice: drinkPrice,
+                drinkDesc: drinkDesc,
+                drinkCat: drinkCat,
+                drinkBest: drinkBest,
+                drinkId: drinkId,
+                drinkImage: drinkImage,
+                unhide: unhide,
+                userId: (users.length !== 0) ? users[0].email : req.session.userId,
+                email: (users.length !== 0) ? users[0].email : ''
+            });
+        });
+    }
 });
 
 module.exports = router;

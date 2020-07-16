@@ -27,7 +27,7 @@
                             <option value="">Choose...</option>
                             {{#if categories}}
                             {{#each categories}}
-                            <option value={{name}} {{#if selected}} selected {{/if}}>{{name}}</option>
+                            <option value="{{name}}" {{#if selected}} selected {{/if}}>{{name}}</option>
                             {{/each}}
                             {{/if}}
                         </select>
@@ -35,8 +35,10 @@
                     <div class="form-group">
                         <label for="drinkBest">Bestseller</label>
                         <select class="custom-select" name="drinkBest" id="drinkBest">
-                            <option value="true" {{#if topdrink}} selected {{/if}}>Yes</option>
-                            <option value="false" {{#unless topdrink}} selected {{/unless}}>No</option>
+                            <option value="">Choose...</option>
+                            <option value="true" {{#if topdrink}}{{#if unhide}} selected {{/if}}{{/if}}>True</option>
+                            <option value="false" {{#unless topdrink}}{{#if unhide}} selected {{/if}}{{/unless}}>False
+                            </option>
                         </select>
                     </div>
 

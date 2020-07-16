@@ -14,7 +14,7 @@ const IN_PROD = process.env.NODE_ENV === 'production';
 
 //Connect to mongodb
 const db = process.env.MONGO_URI;
-mongoose.connect(db, { useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(db, { useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
     .then(() => console.log('Connected to mongoDB'))
     .catch(err => console.log(err));
 

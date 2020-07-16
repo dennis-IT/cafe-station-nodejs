@@ -28,10 +28,12 @@
                         <td>{{description}}</td>
                         <td>{{category}}</td>
                         <td>{{bestseller}}</td>
-                        <td><a href="/manage/drink/update/{{url}}"
-                                class="btn btn-warning float-left text-white font-weight-bold">Update</a></td>
-                        <td><a href="/manage/drink/delete/{{url}}"
-                                class="btn btn-danger float-left text-white font-weight-bold">Remove</a></td>
+                        <td class="space-shrink"><a href="/manage/drink/delete/{{url}}"
+                                class="btn btn-danger float-left text-white font-weight-bold small-font">Remove</a>
+                        </td>
+                        <td class="space-shrink"><a href="/manage/drink/update/{{url}}"
+                                class="btn btn-warning float-left text-white font-weight-bold small-font">Update</a>
+                        </td>
                     </tr>
                     {{/each}}
                     {{/if}}
