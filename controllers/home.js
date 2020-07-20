@@ -22,7 +22,8 @@ router.get('/', async (req, res) => {
         categories: categories,
         bestsellers: bestsellers,
         userId: (users.length !== 0) ? users[0].email : req.session.userId,
-        email: (users.length !== 0) ? users[0].email : ''
+        email: (users.length !== 0) ? users[0].email : '',
+        totalItems: (req.session.cart) ? req.session.cart.length : 0
     });
 });
 

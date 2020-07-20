@@ -1,5 +1,9 @@
 <main>
     <div class="item-container">
+        {{#each errorMessages}}
+        <div class="error-message">{{this}}</div>
+        {{/each}}
+
         {{#each drinks}}
         <div class="item-description">
             <div class="item-image">
@@ -10,9 +14,18 @@
                 <p class="price">${{price}}</p>
                 <p class="intro">{{description}}</p>
                 <p class="category">Category: {{category}}</p>
-                <form action="" method="POST">
-                    <input id="orderedQuantity" name="orderedQuantity" type="number" min="1" value="1">
-                    <div><button type="submit">Add to Order</button></div>
+                <form method="POST" action="/menu/{{category}}/{{url}}" id="cart-submit" novalidate>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <input id="orderedQuantity" name="itemQty" type="number" min="1" value="1">
+                            <input type="submit" class="btn btn-secondary text-white" value="Add Order">
+
+                            <input type="hidden" name="itemName" value="{{name}}" />
+                            <input type="hidden" name="itemUrl" value="/menu/{{category}}/{{url}}" />
+                            <input type="hidden" name="itemPrice" value="{{price}}" />
+                            <input type="hidden" name="itemImg" value="{{imgPath}}" />
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>

@@ -1,3 +1,4 @@
+const serviceAuth = require('./serviceAuth');
 const User = require('../model/user');
 const Category = require('../model/category');
 const Drink = require('../model/drink');
@@ -36,7 +37,8 @@ router.get('/:category', async (req, res) => {
         categories_sort: categories_sort,
         drinks: drinks_sort,
         userId: (users.length !== 0) ? users[0].email : req.session.userId,
-        email: (users.length !== 0) ? users[0].email : ''
+        email: (users.length !== 0) ? users[0].email : '',
+        totalItems: (req.session.cart) ? req.session.cart.length : 0
     });
 });
 
@@ -49,8 +51,69 @@ router.get('/:category/:id', async (req, res) => {
         title: result[0].name,
         drinks: result,
         userId: (users.length !== 0) ? users[0].email : req.session.userId,
-        email: (users.length !== 0) ? users[0].email : ''
+        email: (users.length !== 0) ? users[0].email : '',
+        totalItems: (req.session.cart) ? req.session.cart.length : 0
     });
+});
+
+router.post('/:category/:id', serviceAuth.verifyLogin, async (req, res) => {
+    req.body.userAgent = req.get('User-Agent');
+    let users = await User.find({ email: req.session.userId }).lean();
+    let drinks = await Drink.find().lean();
+    let result = drinks.filter(drink => drink.url === req.params.id);
+    const errors = [];
+    const { itemName, itemUrl, itemQty, itemPrice, itemImg } = req.body;
+
+    if (!/^\d+$/.test(itemQty)) {
+        errors.push('Invalid quantity number');
+    }
+
+    if (errors.length > 0) {
+        res.render('item', {
+            title: itemName,
+            errorMessages: errors,
+            title: result[0].name,
+            drinks: result,
+            userId: (users.length !== 0) ? users[0].email : req.session.userId,
+            email: (users.length !== 0) ? users[0].email : '',
+            totalItems: (req.session.cart) ? req.session.cart.length : 0
+        });
+    } else {
+        const newItem = {
+            itemName: itemName,
+            itemUrl: itemUrl,
+            itemQty: parseInt(itemQty),
+            itemPrice: parseFloat(itemPrice),
+            itemImg: itemImg,
+            itemTotal: parseInt(itemQty) * parseFloat(itemPrice)
+        };
+
+        if (req.session.cart) {
+            let flag = false;
+            for (let i = 0; i < req.session.cart.length && !flag; i++) {
+                if (req.session.cart[i].itemName === itemName) {
+                    req.session.cart[i].itemQty += parseInt(itemQty);
+                    req.session.cart[i].itemTotal = req.session.cart[i].itemQty * parseFloat(itemPrice)
+                    flag = true;
+                }
+            }
+
+            if (!flag) {
+                req.session.cart.push(newItem);
+            }
+        } else {
+            req.session.cart = [newItem];
+        }
+
+        res.render('item', {
+            title: itemName,
+            title: result[0].name,
+            drinks: result,
+            userId: (users.length !== 0) ? users[0].email : req.session.userId,
+            email: (users.length !== 0) ? users[0].email : '',
+            totalItems: (req.session.cart) ? req.session.cart.length : 0
+        });
+    }
 });
 
 module.exports = router;

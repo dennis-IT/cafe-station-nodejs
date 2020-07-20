@@ -5,13 +5,15 @@ const router = express.Router();
 
 router.get('/login', serviceAuth.redirectDashboard, (req, res) => {
     res.render('login', {
-        title: 'Login'
+        title: 'Login',
+        totalItems: (req.session.cart) ? req.session.cart.length : 0
     });
 });
 
 router.get('/register', serviceAuth.redirectDashboard, (req, res) => {
     res.render('register', {
-        title: 'Register'
+        title: 'Register',
+        totalItems: (req.session.cart) ? req.session.cart.length : 0
     });
 });
 
@@ -36,7 +38,21 @@ router.get('/dashboard', serviceAuth.verifyLogin, async (req, res) => {
         lname: user[0].lname,
         email: user[0].email,
         status: (user[0].admin) ? 'Data Entry Clerk' : 'Customer',
-        isAdmin: user[0].admin
+        isAdmin: user[0].admin,
+        totalItems: (req.session.cart) ? req.session.cart.length : 0
+    });
+});
+
+router.get('/cart', serviceAuth.verifyLogin, async (req, res) => {
+    let users = await User.find({ email: req.session.userId }).lean();
+    const items = req.session.cart;
+
+    res.render('shoppingCart', {
+        title: 'Shopping Cart',
+        items: items,
+        userId: (users.length !== 0) ? users[0].email : req.session.userId,
+        email: (users.length !== 0) ? users[0].email : '',
+        totalItems: (req.session.cart) ? req.session.cart.length : 0
     });
 });
 

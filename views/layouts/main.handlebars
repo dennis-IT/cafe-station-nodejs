@@ -20,6 +20,11 @@
                         <li><a href="/" class="nav-menu-item"><i class="fas fa-home"></i><span>HOME</span></a></li>
                         <li><a href="/menu" class="nav-menu-item"><i class="far fa-list-alt"></i><span>MENU</span></a>
                         </li>
+                        <li>
+                            <a class="nav-menu-item" href="/users/cart"><i class="fas fa-shopping-cart"></i>
+                                CART<div class="badge">{{totalItems}}</div>
+                            </a>
+                        </li>
 
                         {{#if userId}}
                         <li class="login logged dropdown">

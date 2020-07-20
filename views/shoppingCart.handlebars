@@ -1,0 +1,42 @@
+<main>
+    <div class="container">
+        <h3>Shopping Cart</h3>
+        <hr>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="">Image</th>
+                        <th style="">Name</th>
+                        <th style="">Qty</th>
+                        <th style="">Unit Price</th>
+                        <th style="">Line Price</th>
+                        <th style=""></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#if items}}
+                    {{#each items}}
+                    <tr>
+                        <td class="td-image"><img src="/images/{{itemImg}}" alt={{itemName}} class="drink-image"></td>
+                        <td class="text-capitalize"><a href="{{itemUrl}}">{{itemName}}</a></td>
+                        <td>{{itemQty}}</td>
+                        <td>{{itemPrice}}</td>
+                        <td>{{itemTotal}}</td>
+                        <td class="space-shrink"><a href="/manage/drink/delete/{{url}}"
+                                class="btn btn-danger float-left text-white font-weight-bold small-font">Remove</a>
+                        </td>
+                        {{!-- <td class="space-shrink"><a href="/manage/drink/update/{{url}}"
+                                class="btn btn-warning float-left text-white font-weight-bold small-font">Update</a>
+                        </td> --}}
+                    </tr>
+                    {{/each}}
+                    {{/if}}
+                </tbody>
+            </table>
+            {{#unless items}}
+            <div class="col-md-12 text-center">Shopping Cart is empty</div>
+            {{/unless}}
+        </div>
+    </div>
+</main>

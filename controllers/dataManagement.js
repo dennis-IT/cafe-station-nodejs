@@ -35,7 +35,8 @@ router.get('/category', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, async 
         title: 'Category',
         categories: categories,
         userId: (users.length !== 0) ? users[0].email : req.session.userId,
-        email: (users.length !== 0) ? users[0].email : ''
+        email: (users.length !== 0) ? users[0].email : '',
+        totalItems: (req.session.cart) ? req.session.cart.length : 0
     });
 });
 
@@ -47,7 +48,8 @@ router.get('/drink', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, async (re
         title: 'Drink',
         drinks: drinks,
         userId: (users.length !== 0) ? users[0].email : req.session.userId,
-        email: (users.length !== 0) ? users[0].email : ''
+        email: (users.length !== 0) ? users[0].email : '',
+        totalItems: (req.session.cart) ? req.session.cart.length : 0
     });
 });
 
@@ -57,7 +59,8 @@ router.get('/category/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, as
     res.render('addCategory', {
         title: 'Category',
         userId: (users.length !== 0) ? users[0].email : req.session.userId,
-        email: (users.length !== 0) ? users[0].email : ''
+        email: (users.length !== 0) ? users[0].email : '',
+        totalItems: (req.session.cart) ? req.session.cart.length : 0
     });
 });
 
@@ -69,7 +72,8 @@ router.get('/drink/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, async
         title: 'Drink',
         categories: categories,
         userId: (users.length !== 0) ? users[0].email : req.session.userId,
-        email: (users.length !== 0) ? users[0].email : ''
+        email: (users.length !== 0) ? users[0].email : '',
+        totalItems: (req.session.cart) ? req.session.cart.length : 0
     });
 });
 
@@ -93,7 +97,8 @@ router.post('/category/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, u
             errorMessages: errors,
             catName: itemName,
             userId: (users.length !== 0) ? users[0].email : req.session.userId,
-            email: (users.length !== 0) ? users[0].email : ''
+            email: (users.length !== 0) ? users[0].email : '',
+            totalItems: (req.session.cart) ? req.session.cart.length : 0
         });
     } else {
         Category.find({ name: itemName })
@@ -107,7 +112,8 @@ router.post('/category/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, u
                         catName: itemName,
                         catImage: req.file.originalname,
                         userId: (users.length !== 0) ? users[0].email : req.session.userId,
-                        email: (users.length !== 0) ? users[0].email : ''
+                        email: (users.length !== 0) ? users[0].email : '',
+                        totalItems: (req.session.cart) ? req.session.cart.length : 0
                     });
                 } else {
                     const category = new Category({
@@ -126,7 +132,8 @@ router.post('/category/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, u
                                 catName: itemName,
                                 catImage: req.file.originalname,
                                 userId: (users.length !== 0) ? users[0].email : req.session.userId,
-                                email: (users.length !== 0) ? users[0].email : ''
+                                email: (users.length !== 0) ? users[0].email : '',
+                                totalItems: (req.session.cart) ? req.session.cart.length : 0
                             });
                         });
                 }
@@ -180,7 +187,8 @@ router.post('/drink/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, uplo
             drinkBest: drinkBest,
             unhide: unhide,
             userId: (users.length !== 0) ? users[0].email : req.session.userId,
-            email: (users.length !== 0) ? users[0].email : ''
+            email: (users.length !== 0) ? users[0].email : '',
+            totalItems: (req.session.cart) ? req.session.cart.length : 0
         });
     } else {
         const drink = new Drink({
@@ -211,7 +219,8 @@ router.post('/drink/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, uplo
                     unhide: unhide,
                     drinkImage: req.file.originalname,
                     userId: (users.length !== 0) ? users[0].email : req.session.userId,
-                    email: (users.length !== 0) ? users[0].email : ''
+                    email: (users.length !== 0) ? users[0].email : '',
+                    totalItems: (req.session.cart) ? req.session.cart.length : 0
                 });
             });
     }
@@ -266,7 +275,8 @@ router.get('/drink/update/:drink', serviceAuth.verifyLogin, serviceAuth.verifyAd
         drinkImage: drink.imgPath,
         drinkId: drink._id,
         userId: (users.length !== 0) ? users[0].email : req.session.userId,
-        email: (users.length !== 0) ? users[0].email : ''
+        email: (users.length !== 0) ? users[0].email : '',
+        totalItems: (req.session.cart) ? req.session.cart.length : 0
     });
 });
 
@@ -318,7 +328,8 @@ router.post('/drink/update', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, u
             drinkImage: drinkImage,
             unhide: unhide,
             userId: (users.length !== 0) ? users[0].email : req.session.userId,
-            email: (users.length !== 0) ? users[0].email : ''
+            email: (users.length !== 0) ? users[0].email : '',
+            totalItems: (req.session.cart) ? req.session.cart.length : 0
         });
     } else {
         let drink = {
@@ -348,7 +359,8 @@ router.post('/drink/update', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, u
                 drinkImage: drinkImage,
                 unhide: unhide,
                 userId: (users.length !== 0) ? users[0].email : req.session.userId,
-                email: (users.length !== 0) ? users[0].email : ''
+                email: (users.length !== 0) ? users[0].email : '',
+                totalItems: (req.session.cart) ? req.session.cart.length : 0
             });
         });
     }
@@ -398,7 +410,8 @@ router.post('/drink/update-no-image', serviceAuth.verifyLogin, serviceAuth.verif
             drinkImage: drinkImage,
             unhide: unhide,
             userId: (users.length !== 0) ? users[0].email : req.session.userId,
-            email: (users.length !== 0) ? users[0].email : ''
+            email: (users.length !== 0) ? users[0].email : '',
+            totalItems: (req.session.cart) ? req.session.cart.length : 0
         });
     } else {
         let drink = {
@@ -427,7 +440,8 @@ router.post('/drink/update-no-image', serviceAuth.verifyLogin, serviceAuth.verif
                 drinkImage: drinkImage,
                 unhide: unhide,
                 userId: (users.length !== 0) ? users[0].email : req.session.userId,
-                email: (users.length !== 0) ? users[0].email : ''
+                email: (users.length !== 0) ? users[0].email : '',
+                totalItems: (req.session.cart) ? req.session.cart.length : 0
             });
         });
     }
