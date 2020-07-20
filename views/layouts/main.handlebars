@@ -13,39 +13,55 @@
 <body>
     <div class="home-container">
         <header>
-            <div class="navigation">
-                <div class="nav-logo"><a href="/">Café Station</a></div>
-                <div class="nav-menu">
-                    <ul>
-                        <li><a href="/" class="nav-menu-item"><i class="fas fa-home"></i><span>HOME</span></a></li>
-                        <li><a href="/menu" class="nav-menu-item"><i class="far fa-list-alt"></i><span>MENU</span></a>
+            <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+                <div class="navbar-brand nav-logo mr-5"><a href="/">Café Station</a></div>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/">HOME</a>
                         </li>
-                        <li>
-                            <a class="nav-menu-item" href="/users/cart"><i class="fas fa-shopping-cart"></i>
-                                CART<div class="badge">{{totalItems}}</div>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/menu">MENU</a>
+                        </li>
+                    </ul>
+
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/users/cart">
+                                CART
+                                <span class="badge">{{totalItems}}</span>
                             </a>
                         </li>
 
                         {{#if userId}}
-                        <li class="login logged dropdown">
-                            <a href="#" class="nav-menu-item user-logged">{{email}}</a>
-                            <div class="dropdown-content">
-                                <a href="/users/dashboard">Dashboard</a>
-                                <a href="/users/logout">Logout</a>
+                        <li class="nav-item">
+                            <div class="dropdown show">
+                                <a class="nav-link last dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    {{email}}
+                                </a>
+
+                                <div class="dropdown-menu mb-2" aria-labelledby="dropdownMenuLink">
+                                    <a class="dropdown-item" href="/users/dashboard">Dashboard</a>
+                                    <a class="dropdown-item" href="/users/logout">Logout</a>
+                                </div>
                             </div>
                         </li>
                         {{else}}
-                        <li class="register"><a href="/users/register" class="nav-menu-item"><i
-                                    class="fas fa-cog"></i><span>REGISTER</span></a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/users/register">REGISTER</a>
                         </li>
-                        <li class="login"><a href="/users/login" class="nav-menu-item"><i
-                                    class="fas fa-sign-in-alt"></i><span>LOGIN</span></a>
+                        <li class="nav-item">
+                            <a class="nav-link last" href="/users/login">LOGIN</a>
                         </li>
                         {{/if}}
                     </ul>
                 </div>
-                <div class="nav-toggle"><a href="#"><i class="fas fa-bars"></i></a></div>
-            </div>
+            </nav>
         </header>
 
         {{{body}}}
@@ -102,7 +118,6 @@
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
         crossorigin="anonymous"></script>
     <script src="/js/script.js"></script>
-
 </body>
 
 </html>

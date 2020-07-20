@@ -350,9 +350,9 @@ main {
 
 .side-bar-link {
   text-decoration: none;
-  color: #2e2e2e;
+  color: #850503;
   font-weight: 500;
-  font-size: 1rem;
+  font-size: 1.1rem;
   text-transform: capitalize;
 }
 
@@ -522,7 +522,7 @@ main {
 
 /* Start of footer */
 footer {
-  background-color: #2e2e2e;
+  background-color: #343a40;
 }
 
 .copyright {
@@ -557,7 +557,6 @@ footer {
 .nav-footer ul li:hover,
 .nav-footer ul li a:hover {
   color: orange;
-  transition: 0.3s all;
 }
 
 .newsletter {
@@ -712,10 +711,6 @@ footer {
   margin-bottom: 0.5rem;
 }
 
-.dashboard-side-bar-link {
-  color: #850503 !important;
-}
-
 .dashboard-title,
 .dashboard-subtitle {
   padding: 0 2rem;
@@ -795,10 +790,6 @@ footer {
     grid-template-columns: 25% auto !important;
   }
 
-  .side-bar {
-    height: 50px;
-  }
-
   .side-bar-list {
     flex-direction: column;
   }
@@ -809,7 +800,6 @@ footer {
   }
 
   .dashboard-side-bar {
-    height: 150px;
     padding: 0.75rem !important;
   }
 
@@ -919,7 +909,41 @@ label {
 
 .badge {
   font-size: 100%;
-  padding: 0.25rem;
-  margin: 0.25rem;
+  background-color: orange;
+}
+
+/* New navbar and dropdown BS */
+.navbar {
+  padding: 0 2rem !important;
+}
+
+.nav-link {
+  font-size: 1rem;
+  font-weight: bold;
+  text-decoration: none;
+  color: white !important;
+  padding-right: 2rem !important;
+}
+
+.nav-link:hover {
+  color: orange !important;
+}
+
+.nav-link:hover span {
+  color: white !important;
+}
+
+.navbar-toggler {
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+
+.last {
+  padding-right: 0 !important;
+}
+
+.dropdown-item.active,
+.dropdown-item:active {
+  color: #fff;
   background-color: grey;
 }
