@@ -947,3 +947,7 @@ label {
   color: #fff;
   background-color: grey;
 }
+
+.bootstrap-select .dropdown-toggle:focus {
+  outline: none !important;
+}
