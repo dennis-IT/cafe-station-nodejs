@@ -1,11 +1,5 @@
 (function () {
     window.onload = function () {
-        let nav_toggle = this.document.querySelector(".nav-toggle");
-        let nav_menu = this.document.querySelector(".nav-menu");
-        nav_toggle.addEventListener("click", () => {
-            nav_menu.classList.toggle("active");
-        });
-
         //Check button edit image onclick()
         let btnEdit = document.querySelector('#edit-image-btn');
         let uplbox = document.querySelector('#imageUploadBox');

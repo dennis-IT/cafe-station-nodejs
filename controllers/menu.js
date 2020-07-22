@@ -62,7 +62,7 @@ router.post('/:category/:id', serviceAuth.verifyLogin, async (req, res) => {
     let drinks = await Drink.find().lean();
     let result = drinks.filter(drink => drink.url === req.params.id);
     const errors = [];
-    const { itemName, itemUrl, itemQty, itemPrice, itemImg } = req.body;
+    const { itemName, itemCat, itemUrl, itemQty, itemPrice, itemImg } = req.body;
 
     if (!/^\d+$/.test(itemQty)) {
         errors.push('Invalid quantity number');
@@ -81,11 +81,12 @@ router.post('/:category/:id', serviceAuth.verifyLogin, async (req, res) => {
     } else {
         const newItem = {
             itemName: itemName,
+            itemCat: itemCat,
             itemUrl: itemUrl,
             itemQty: parseInt(itemQty),
             itemPrice: parseFloat(itemPrice),
             itemImg: itemImg,
-            itemTotal: parseInt(itemQty) * parseFloat(itemPrice)
+            itemTotal: Math.round((parseInt(itemQty) * parseFloat(itemPrice)) * 100) / 100
         };
 
         if (req.session.cart) {
@@ -93,7 +94,7 @@ router.post('/:category/:id', serviceAuth.verifyLogin, async (req, res) => {
             for (let i = 0; i < req.session.cart.length && !flag; i++) {
                 if (req.session.cart[i].itemName === itemName) {
                     req.session.cart[i].itemQty += parseInt(itemQty);
-                    req.session.cart[i].itemTotal = req.session.cart[i].itemQty * parseFloat(itemPrice)
+                    req.session.cart[i].itemTotal = Math.round((req.session.cart[i].itemQty * req.session.cart[i].itemPrice) * 100) / 100
                     flag = true;
                 }
             }

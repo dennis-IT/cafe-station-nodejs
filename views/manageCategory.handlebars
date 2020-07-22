@@ -1,7 +1,8 @@
 <main>
     <div class="container">
         <h3>List of Categories
-            <a href="/manage/category/add" class="btn btn-secondary float-right text-white font-weight-bold">Add New</a>
+            <button class="btn btn-secondary float-right text-white font-weight-bold"
+                onclick="window.location.href='/manage/category/add'">Add New</button>
         </h3>
         <hr>
         <div class="table-responsive">
@@ -19,8 +20,10 @@
                     <tr>
                         <td class="td-image"><img src="/images/{{imgPath}}" alt={{name}} class="category-image"></td>
                         <td class="text-capitalize">{{name}}</td>
-                        <td><a href="/manage/category/delete/{{name}}"
-                                class="btn btn-danger float-left text-white font-weight-bold small-font">Remove</a></td>
+                        <td>
+                            <button class="btn btn-danger float-left text-white font-weight-bold btn-sm"
+                                onclick="window.location.href='/manage/category/delete/{{name}}'">Remove</button>
+                        </td>
                     </tr>
                     {{/each}}
                     {{/if}}

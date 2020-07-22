@@ -1,7 +1,8 @@
 <main>
     <div class="container">
         <h3>List of Drinks
-            <a href="/manage/drink/add" class="btn btn-secondary float-right text-white font-weight-bold">Add New</a>
+            <button class="btn btn-secondary float-right text-white font-weight-bold"
+                onclick="window.location.href='/manage/drink/add'">Add New</button>
         </h3>
         <hr>
         <div class="table-responsive">
@@ -27,11 +28,13 @@
                         <td>{{description}}</td>
                         <td>{{category}}</td>
                         <td>{{bestseller}}</td>
-                        <td class="space-shrink"><a href="/manage/drink/delete/{{url}}"
-                                class="btn btn-danger float-left text-white font-weight-bold small-font">Remove</a>
+                        <td class="space-shrink">
+                            <button class="btn btn-danger float-left text-white font-weight-bold btn-sm"
+                                onclick="window.location.href='/manage/drink/delete/{{url}}'">Remove</button>
                         </td>
-                        <td class="space-shrink"><a href="/manage/drink/update/{{url}}"
-                                class="btn btn-warning float-left text-white font-weight-bold small-font">Update</a>
+                        <td class="space-shrink">
+                            <button class="btn btn-warning float-left text-white font-weight-bold btn-sm"
+                                onclick="window.location.href='/manage/drink/update/{{url}}'">Update</button>
                         </td>
                     </tr>
                     {{/each}}

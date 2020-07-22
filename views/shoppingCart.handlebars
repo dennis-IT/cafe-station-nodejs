@@ -1,5 +1,9 @@
 <main>
     <div class="container">
+        {{#each messages}}
+        <div class="success-message">{{this}}</div>
+        {{/each}}
+
         <h3>Shopping Cart</h3>
         <hr>
         <div class="table-responsive">
@@ -19,24 +23,51 @@
                     {{#each items}}
                     <tr>
                         <td class="td-image"><img src="/images/{{itemImg}}" alt={{itemName}} class="drink-image"></td>
-                        <td class="text-capitalize"><a href="{{itemUrl}}">{{itemName}}</a></td>
-                        <td>{{itemQty}}</td>
-                        <td>{{itemPrice}}</td>
-                        <td>{{itemTotal}}</td>
-                        <td class="space-shrink"><a href="/manage/drink/delete/{{url}}"
-                                class="btn btn-danger float-left text-white font-weight-bold small-font">Remove</a>
+                        <td class="text-capitalize"><a href="/menu/{{itemCat}}/{{itemUrl}}">{{itemName}}</a></td>
+                        <td>
+                            <div class="d-flex">
+                                <label type="button" class="btn btn-secondary btn-sm"
+                                    onclick="window.location.href='/manage/cart/decrease/{{itemUrl}}'"><i
+                                        class="fas fa-minus"></i></label>
+                                <label style="width: 3.5rem;" class="d-flex align-items-center justify-content-center">
+                                    <div>{{itemQty}}</div>
+                                </label>
+                                <label type="button" class="btn btn-secondary btn-sm"
+                                    onclick="window.location.href='/manage/cart/increase/{{itemUrl}}'"><i
+                                        class="fas fa-plus"></i></label>
+                            </div>
                         </td>
-                        {{!-- <td class="space-shrink"><a href="/manage/drink/update/{{url}}"
-                                class="btn btn-warning float-left text-white font-weight-bold small-font">Update</a>
-                        </td> --}}
+                        <td>${{itemPrice}}</td>
+                        <td>${{itemTotal}}</td>
+                        <td>
+                            <button class="btn btn-danger float-left text-white font-weight-bold btn-sm"
+                                onclick="window.location.href='/manage/cart/delete/{{itemUrl}}'">Remove</button>
+                        </td>
                     </tr>
                     {{/each}}
                     {{/if}}
                 </tbody>
+                {{#if items}}
+                <tfoot>
+                    <tr>
+                        <td colspan="4" class="text-right font-weight-bold">Your total is (tax-excluded)</td>
+                        <td>${{cartInTotal}}</td>
+                    </tr>
+                </tfoot>
+                {{/if}}
             </table>
             {{#unless items}}
             <div class="col-md-12 text-center">Shopping Cart is empty</div>
             {{/unless}}
+            <hr>
+            <button class="btn btn-secondary justify-center text-white font-weight-bold"
+                onclick="window.location.href='/menu'">&#60;&#32;Continue to shop</button>
+            {{#if items}}
+            <button class="btn btn-secondary justify-center text-white font-weight-bold ml-3"
+                onclick="window.location.href='/users/cart/order-complete'">Place your order&#32;&#62;</button>
+            {{/if}}
+            <br>
+            <br>
         </div>
     </div>
 </main>

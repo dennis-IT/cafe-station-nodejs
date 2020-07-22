@@ -1,5 +1,7 @@
 const serviceAuth = require('./serviceAuth');
+const dataHelper = require('./dataHelper');
 const User = require('../model/user');
+const Order = require('../model/order');
 const express = require('express');
 const router = express.Router();
 
@@ -46,14 +48,57 @@ router.get('/dashboard', serviceAuth.verifyLogin, async (req, res) => {
 router.get('/cart', serviceAuth.verifyLogin, async (req, res) => {
     let users = await User.find({ email: req.session.userId }).lean();
     const items = req.session.cart;
+    req.session.carttotal = 0.00;
+
+    if (req.session.cart) {
+        req.session.cart.forEach(item => {
+            req.session.carttotal += item.itemTotal;
+        });
+    }
 
     res.render('shoppingCart', {
         title: 'Shopping Cart',
         items: items,
+        cartInTotal: Math.round(req.session.carttotal * 100) / 100,
         userId: (users.length !== 0) ? users[0].email : req.session.userId,
         email: (users.length !== 0) ? users[0].email : '',
         totalItems: (req.session.cart) ? req.session.cart.length : 0
     });
+});
+
+router.get('/cart/order-complete', serviceAuth.verifyLogin, async (req, res) => {
+    if (req.session.cart !== []) {
+        req.session.cart.forEach(item => {
+            const order = new Order({
+                customerEmail: req.session.userId,
+                itemName: item.itemName,
+                itemQty: item.itemQty,
+                unitPrice: item.itemPrice,
+                linePrice: item.itemTotal,
+                orderDate: new Date()
+            });
+            order.save();
+        });
+
+        const sgMail = require('@sendgrid/mail');
+        sgMail.setApiKey(process.env.SEND_GRID_API_KEY);
+        const msg = {
+            to: `${req.session.userId}`,
+            from: 'cafe.express.to@gmail.com',
+            subject: 'Café Station - Order Confirmation',
+            html: `${dataHelper.sendgridTemplate(req.session)}`
+        };
+
+        sgMail.send(msg)
+            .then(() => {
+                req.session.cart = [];
+                req.session.carttotal = 0;
+                res.redirect('/users/cart');
+            })
+            .catch(err => {
+                console.log("There was an error sending order confirmation");
+            });
+    }
 });
 
 router.post('/login', serviceAuth.redirectDashboard, (req, res) => {
@@ -79,6 +124,8 @@ router.post('/login', serviceAuth.redirectDashboard, (req, res) => {
     } else {
         serviceAuth.loginUser(req.body)
             .then(user => {
+                req.session.userfname = user.fname;
+                req.session.userlname = user.lname;
                 req.session.userId = user.email;
                 req.session.admin = user.admin;
                 res.redirect('/users/dashboard');

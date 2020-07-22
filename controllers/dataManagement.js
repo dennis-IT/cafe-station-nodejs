@@ -447,4 +447,42 @@ router.post('/drink/update-no-image', serviceAuth.verifyLogin, serviceAuth.verif
     }
 });
 
+router.get('/cart/delete/:drinkUrl', serviceAuth.verifyLogin, (req, res) => {
+    let found = false;
+    for (let i = 0; i < req.session.cart.length && !found; i++) {
+        if (req.session.cart[i].itemUrl === req.params.drinkUrl) {
+            req.session.cart.splice(i, 1);
+            found = true;
+        }
+    }
+
+    res.redirect('/users/cart');
+});
+
+router.get('/cart/decrease/:drinkUrl', serviceAuth.verifyLogin, (req, res) => {
+    let found = false;
+    for (let i = 0; i < req.session.cart.length && !found; i++) {
+        if (req.session.cart[i].itemUrl === req.params.drinkUrl) {
+            if (req.session.cart[i].itemQty > 1) {
+                req.session.cart[i].itemQty--;
+                req.session.cart[i].itemTotal = Math.round((req.session.cart[i].itemQty * req.session.cart[i].itemPrice) * 100) / 100
+            }
+            found = true;
+        }
+    }
+    res.redirect('/users/cart');
+});
+
+router.get('/cart/increase/:drinkUrl', serviceAuth.verifyLogin, (req, res) => {
+    let found = false;
+    for (let i = 0; i < req.session.cart.length && !found; i++) {
+        if (req.session.cart[i].itemUrl === req.params.drinkUrl) {
+            req.session.cart[i].itemQty++;
+            req.session.cart[i].itemTotal = Math.round((req.session.cart[i].itemQty * req.session.cart[i].itemPrice) * 100) / 100
+            found = true;
+        }
+    }
+    res.redirect('/users/cart');
+});
+
 module.exports = router;
