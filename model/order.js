@@ -1,6 +1,14 @@
 const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
+    orderId: {
+        type: Number,
+        required: true
+    },
+    orderDate: {
+        type: Date,
+        required: true
+    },
     customerEmail: {
         type: String,
         required: true
@@ -19,10 +27,6 @@ const orderSchema = new mongoose.Schema({
     },
     linePrice: {
         type: Number,
-        required: true
-    },
-    orderDate: {
-        type: Date,
         required: true
     }
 });

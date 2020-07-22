@@ -1,3 +1,4 @@
+const Order = require('../model/order');
 const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
@@ -18,25 +19,24 @@ module.exports.imageResizer = (req, res, next) => {
     next();
 };
 
-module.exports.sendgridTemplate = (info) => {
-    const { userfname, userlname, userId, cart, carttotal } = info;
-    let today = new Date();
-    let date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-    let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-    let dateTime = date + ' ' + time;
+module.exports.cartCheckout = cartInfo => {
+    return new Promise((resolve, reject) => {
+        const { userfname, userlname, userId, cart, carttotal } = cartInfo;
+        let today = new Date();
+        let body = '';
+        let date = today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear() + ' ' + today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
 
-    let body = '';
-    cart.forEach(item => {
-        body += `<tr>
+        cart.forEach(item => {
+            body += `<tr>
                 <td><img src="https://cafe-s.herokuapp.com/images/${item.itemImg}" alt="${item.itemName}" style="width: 50px; height: 50px;"></td>
                 <td>${item.itemName}</td>
                 <td>${item.itemQty}</td>
                 <td>$${item.itemPrice}</td>
                 <td>$${item.itemTotal}</td>
             </tr>`;
-    });
+        });
 
-    return `<!DOCTYPE html>
+        let sgTemplate = `<!DOCTYPE html>
         <html lang="en">
         <head>
             <meta charset="UTF-8">
@@ -45,7 +45,7 @@ module.exports.sendgridTemplate = (info) => {
         <body>
         <div style="text-align: center; font-weight: bold;">THANK YOU FOR SHOPPING WITH US TODAY.</div>
         <div style="text-align: center; font-weight: bold;">Sale Receipt</div>
-        <div style="text-align: center; font-style: italic;">${dateTime}</div>
+        <div style="text-align: center; font-style: italic;">${date}</div>
         <div><span style="font-weight: bold;">Customer: </span>${userfname} ${userlname}</div>
         <div><span style="font-weight: bold;">Email: </span>${userId}</div>
             <h3>This is your shopping cart</h3>
@@ -73,7 +73,46 @@ module.exports.sendgridTemplate = (info) => {
                     </table>
         </body>
         </html>`;
-}
+
+        // Generate unique Order Id and save order into DB
+        Order.find().distinct('orderId', (err, orders) => {
+            let oid = ++orders.length;
+            cart.forEach(item => {
+                const order = new Order({
+                    orderId: oid,
+                    orderDate: today,
+                    customerEmail: userId,
+                    itemName: item.itemName,
+                    itemQty: item.itemQty,
+                    unitPrice: item.itemPrice,
+                    linePrice: item.itemTotal
+                });
+                order.save()
+                    .catch(err => {
+                        reject("There was an error processing order checkout " + err);
+                        return;
+                    });
+            });
+        });
+
+        const sgMail = require('@sendgrid/mail');
+        sgMail.setApiKey(process.env.SEND_GRID_API_KEY);
+        const msg = {
+            to: userId,
+            from: 'cafe.express.to@gmail.com',
+            subject: 'Café Station - Order Confirmation',
+            html: sgTemplate
+        };
+
+        sgMail.send(msg)
+            .then(() => {
+                resolve();
+            })
+            .catch(err => {
+                reject("There was an error sending order confirmation " + err);
+            });
+    });
+};
 
 
 

@@ -1,7 +1,6 @@
 const serviceAuth = require('./serviceAuth');
 const dataHelper = require('./dataHelper');
 const User = require('../model/user');
-const Order = require('../model/order');
 const express = require('express');
 const router = express.Router();
 
@@ -67,37 +66,20 @@ router.get('/cart', serviceAuth.verifyLogin, async (req, res) => {
 });
 
 router.get('/cart/order-complete', serviceAuth.verifyLogin, async (req, res) => {
-    if (req.session.cart !== []) {
-        req.session.cart.forEach(item => {
-            const order = new Order({
-                customerEmail: req.session.userId,
-                itemName: item.itemName,
-                itemQty: item.itemQty,
-                unitPrice: item.itemPrice,
-                linePrice: item.itemTotal,
-                orderDate: new Date()
-            });
-            order.save();
-        });
-
-        const sgMail = require('@sendgrid/mail');
-        sgMail.setApiKey(process.env.SEND_GRID_API_KEY);
-        const msg = {
-            to: `${req.session.userId}`,
-            from: 'cafe.express.to@gmail.com',
-            subject: 'Café Station - Order Confirmation',
-            html: `${dataHelper.sendgridTemplate(req.session)}`
-        };
-
-        sgMail.send(msg)
+    let users = await User.find({ email: req.session.userId }).lean();
+    if (req.session.cart) {
+        dataHelper.cartCheckout(req.session)
             .then(() => {
                 req.session.cart = [];
                 req.session.carttotal = 0;
                 res.redirect('/users/cart');
             })
             .catch(err => {
-                console.log("There was an error sending order confirmation");
+                console.error(err)
+                res.status(500).send('Something broke!')
             });
+    } else {
+        res.redirect('/users/cart');
     }
 });
 

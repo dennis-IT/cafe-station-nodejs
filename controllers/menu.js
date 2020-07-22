@@ -64,7 +64,7 @@ router.post('/:category/:id', serviceAuth.verifyLogin, async (req, res) => {
     const errors = [];
     const { itemName, itemCat, itemUrl, itemQty, itemPrice, itemImg } = req.body;
 
-    if (!/^\d+$/.test(itemQty)) {
+    if (itemQty == 0 || !/^\d+$/.test(itemQty)) {
         errors.push('Invalid quantity number');
     }
 
