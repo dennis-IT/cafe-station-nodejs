@@ -29,23 +29,25 @@ router.get('/logout', serviceAuth.verifyLogin, (req, res) => {
     });
 });
 
-router.get('/dashboard', serviceAuth.verifyLogin, async (req, res) => {
-    let user = await User.find({ email: req.session.userId }).lean();
-
-    res.render('dashboard', {
-        title: 'Dashboard',
-        userId: user[0].email,
-        fname: user[0].fname,
-        lname: user[0].lname,
-        email: user[0].email,
-        status: (user[0].admin) ? 'Data Entry Clerk' : 'Customer',
-        isAdmin: user[0].admin,
-        totalItems: (req.session.cart) ? req.session.cart.length : 0
-    });
+router.get('/dashboard', serviceAuth.verifyLogin, (req, res) => {
+    User.findOne({ email: req.session.userId }).lean().exec()
+        .then(user => {
+            res.render('dashboard', {
+                title: 'Dashboard',
+                userId: user.email,
+                fname: user.fname,
+                lname: user.lname,
+                email: user.email,
+                status: (user.admin) ? 'Data Entry Clerk' : 'Customer',
+                isAdmin: user.admin
+            });
+        })
+        .catch(err => {
+            res.status(500).send("Unable to display the page correctly");
+        });
 });
 
-router.get('/cart', serviceAuth.verifyLogin, async (req, res) => {
-    let users = await User.find({ email: req.session.userId }).lean();
+router.get('/cart', serviceAuth.verifyLogin, (req, res) => {
     const items = req.session.cart;
     req.session.carttotal = 0.00;
 
@@ -58,15 +60,11 @@ router.get('/cart', serviceAuth.verifyLogin, async (req, res) => {
     res.render('shoppingCart', {
         title: 'Shopping Cart',
         items: items,
-        cartInTotal: Math.round(req.session.carttotal * 100) / 100,
-        userId: (users.length !== 0) ? users[0].email : req.session.userId,
-        email: (users.length !== 0) ? users[0].email : '',
-        totalItems: (req.session.cart) ? req.session.cart.length : 0
+        cartInTotal: Math.round(req.session.carttotal * 100) / 100
     });
 });
 
-router.get('/cart/order-complete', serviceAuth.verifyLogin, async (req, res) => {
-    let users = await User.find({ email: req.session.userId }).lean();
+router.get('/cart/order-complete', serviceAuth.verifyLogin, (req, res) => {
     if (req.session.cart) {
         dataHelper.cartCheckout(req.session)
             .then(() => {
@@ -84,7 +82,6 @@ router.get('/cart/order-complete', serviceAuth.verifyLogin, async (req, res) => 
 });
 
 router.post('/login', serviceAuth.redirectDashboard, (req, res) => {
-    req.body.userAgent = req.get('User-Agent');
     const errors = [];
     const { email, password } = req.body;
 
@@ -123,7 +120,6 @@ router.post('/login', serviceAuth.redirectDashboard, (req, res) => {
 });
 
 router.post('/register', serviceAuth.redirectDashboard, (req, res) => {
-    req.body.userAgent = req.get('User-Agent');
     const pass_regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,12}$/;
     const email_regex = regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
     const errors = [];

@@ -12,7 +12,6 @@ const app = express();
 const HTTP_PORT = process.env.PORT;
 const IN_PROD = process.env.NODE_ENV === 'production';
 
-//Connect to mongodb
 const db = process.env.MONGO_URI;
 mongoose.connect(db, { useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
     .then(() => console.log('Connected to mongoDB'))
@@ -20,6 +19,9 @@ mongoose.connect(db, { useCreateIndex: true, useNewUrlParser: true, useUnifiedTo
 
 app.engine('handlebars', exphbs());
 app.set('view engine', 'handlebars');
+
+app.use(express.static('public'));
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.set('trust proxy', 1);
 app.use(session({
@@ -34,8 +36,12 @@ app.use(session({
     }
 }));
 
-app.use(express.static('public'));
-app.use(bodyParser.urlencoded({ extended: false }));
+// custom middleware to add "session" to all views (res)
+app.use(function (req, res, next) {
+    res.locals.session = req.session;
+    res.locals.session.totalNumItems = (req.session.cart) ? req.session.cart.length : 0;
+    next();
+});
 
 //Route handlers
 app.use('/', require('./controllers/home'));

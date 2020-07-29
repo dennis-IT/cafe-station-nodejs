@@ -13,7 +13,7 @@ module.exports.verifyLogin = (req, res, next) => {
 
 module.exports.verifyAdmin = (req, res, next) => {
     if (!req.session.admin) {
-        res.send('You do not have permission to view this page');
+        res.status(401).send('You do not have permission to view this page');
     } else {
         next();
     }
@@ -62,7 +62,7 @@ module.exports.registerUser = userData => {
                     if (userData.password !== userData.password2) {
                         reject("Passwords do not match");
                     } else {
-                        bcrypt.genSalt(10, (err, salt) => {
+                        bcrypt.genSalt(12, (err, salt) => {
                             if (err) {
                                 reject("There was an error encrypting the password");
                             } else {

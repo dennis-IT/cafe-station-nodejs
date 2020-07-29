@@ -1,13 +1,17 @@
+const Category = require('../model/category');
+const Drink = require('../model/drink');
 const Order = require('../model/order');
 const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
 
 module.exports.imageResizer = (req, res, next) => {
+    sharp.cache(false);
     if (req.file) {
         try {
-            let newfile = req.body.itemName.toLowerCase().replace(/ /, '-') + path.extname(req.file.originalname);
+            let newfile = req.body.itemName.toLowerCase().replace(/ /g, '-') + path.extname(req.file.originalname);
             sharp(req.file.path).resize(250, 250).toFile('public/images/' + newfile, (err, resizeImage) => {
+                fs.unlinkSync(req.file.path);
                 if (err) {
                     console.log(err);
                 }
@@ -90,7 +94,6 @@ module.exports.cartCheckout = cartInfo => {
                 order.save()
                     .catch(err => {
                         reject("There was an error processing order checkout " + err);
-                        return;
                     });
             });
         });
@@ -109,10 +112,34 @@ module.exports.cartCheckout = cartInfo => {
                 resolve();
             })
             .catch(err => {
-                reject("There was an error sending order confirmation " + err);
+                console.log("There was an error sending order confirmation " + err);
             });
     });
 };
+
+module.exports.getAllCategories = () => {
+    return new Promise(function (resolve, reject) {
+        Category.find().lean().exec()
+            .then(categories => {
+                resolve(categories);
+            })
+            .catch((err) => {
+                reject("query categories returned 0 results");
+            });
+    });
+}
+
+module.exports.getAllDrinks = () => {
+    return new Promise(function (resolve, reject) {
+        Drink.find().lean().exec()
+            .then(drinks => {
+                resolve(drinks);
+            })
+            .catch((err) => {
+                reject("query drinks returned 0 results");
+            });
+    });
+}
 
 
 

@@ -27,59 +27,52 @@ const upload = multer({
     }
 });
 
-router.get('/category', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, async (req, res) => {
-    let users = await User.find({ email: req.session.userId }).lean();
-    let categories = await Category.find().lean();
-
-    res.render('manageCategory', {
-        title: 'Category',
-        categories: categories,
-        userId: (users.length !== 0) ? users[0].email : req.session.userId,
-        email: (users.length !== 0) ? users[0].email : '',
-        totalItems: (req.session.cart) ? req.session.cart.length : 0
-    });
+router.get('/category', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, (req, res) => {
+    dataHelper.getAllCategories()
+        .then(categories => {
+            res.render('manageCategory', {
+                title: 'Category',
+                categories: categories
+            });
+        })
+        .catch(err => {
+            res.status(500).send("Unable to display the page correctly");
+        });
 });
 
-router.get('/drink', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, async (req, res) => {
-    let users = await User.find({ email: req.session.userId }).lean();
-    let drinks = await Drink.find().lean();
-
-    res.render('manageDrink', {
-        title: 'Drink',
-        drinks: drinks,
-        userId: (users.length !== 0) ? users[0].email : req.session.userId,
-        email: (users.length !== 0) ? users[0].email : '',
-        totalItems: (req.session.cart) ? req.session.cart.length : 0
-    });
+router.get('/drink', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, (req, res) => {
+    dataHelper.getAllDrinks()
+        .then(drinks => {
+            res.render('manageDrink', {
+                title: 'Drink',
+                drinks: drinks
+            });
+        })
+        .catch(err => {
+            res.status(500).send("Unable to display the page correctly");
+        });
 });
 
-router.get('/category/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, async (req, res) => {
-    let users = await User.find({ email: req.session.userId }).lean();
-
+router.get('/category/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, (req, res) => {
     res.render('addCategory', {
-        title: 'Category',
-        userId: (users.length !== 0) ? users[0].email : req.session.userId,
-        email: (users.length !== 0) ? users[0].email : '',
-        totalItems: (req.session.cart) ? req.session.cart.length : 0
+        title: 'Category'
     });
 });
 
-router.get('/drink/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, async (req, res) => {
-    let users = await User.find({ email: req.session.userId }).lean();
-    let categories = await Category.find().lean();
-
-    res.render('addDrink', {
-        title: 'Drink',
-        categories: categories,
-        userId: (users.length !== 0) ? users[0].email : req.session.userId,
-        email: (users.length !== 0) ? users[0].email : '',
-        totalItems: (req.session.cart) ? req.session.cart.length : 0
-    });
+router.get('/drink/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, (req, res) => {
+    dataHelper.getAllCategories()
+        .then(categories => {
+            res.render('addDrink', {
+                title: 'Drink',
+                categories: categories
+            });
+        })
+        .catch(err => {
+            res.status(500).send("Unable to display the page correctly");
+        });
 });
 
-router.post('/category/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, upload.single("imageFile"), dataHelper.imageResizer, async (req, res) => {
-    req.body.userAgent = req.get('User-Agent');
-    let users = await User.find({ email: req.session.userId }).lean();
+router.post('/category/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, upload.single("imageFile"), dataHelper.imageResizer, (req, res) => {
     const errors = [];
     const { itemName } = req.body;
 
@@ -95,10 +88,7 @@ router.post('/category/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, u
         res.render('addCategory', {
             title: 'Category',
             errorMessages: errors,
-            catName: itemName,
-            userId: (users.length !== 0) ? users[0].email : req.session.userId,
-            email: (users.length !== 0) ? users[0].email : '',
-            totalItems: (req.session.cart) ? req.session.cart.length : 0
+            catName: itemName
         });
     } else {
         Category.find({ name: itemName })
@@ -110,14 +100,11 @@ router.post('/category/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, u
                         title: 'Category',
                         errorMessages: errors,
                         catName: itemName,
-                        catImage: req.file.originalname,
-                        userId: (users.length !== 0) ? users[0].email : req.session.userId,
-                        email: (users.length !== 0) ? users[0].email : '',
-                        totalItems: (req.session.cart) ? req.session.cart.length : 0
+                        catImage: req.file.originalname
                     });
                 } else {
                     const category = new Category({
-                        imgPath: itemName.toLowerCase().replace(/ /, '-') + path.extname(req.file.originalname),
+                        imgPath: itemName.toLowerCase().replace(/ /g, '-') + path.extname(req.file.originalname),
                         name: itemName.toLowerCase()
                     });
 
@@ -130,10 +117,7 @@ router.post('/category/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, u
                                 title: 'Category',
                                 errorMessages: [err],
                                 catName: itemName,
-                                catImage: req.file.originalname,
-                                userId: (users.length !== 0) ? users[0].email : req.session.userId,
-                                email: (users.length !== 0) ? users[0].email : '',
-                                totalItems: (req.session.cart) ? req.session.cart.length : 0
+                                catImage: req.file.originalname
                             });
                         });
                 }
@@ -141,74 +125,42 @@ router.post('/category/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, u
     }
 });
 
-router.post('/drink/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, upload.single("imageFile"), dataHelper.imageResizer, async (req, res) => {
-    req.body.userAgent = req.get('User-Agent');
-    let users = await User.find({ email: req.session.userId }).lean();
-    let categories = await Category.find().lean();
+router.post('/drink/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, upload.single("imageFile"), dataHelper.imageResizer, (req, res) => {
     let topdrink;
     let unhide = false;
     const errors = [];
     const { itemName, drinkPrice, drinkDesc, drinkCat, drinkBest } = req.body;
 
-    if (itemName == "" || drinkPrice == "" || drinkDesc == "" || drinkCat == "" || drinkBest == "") {
-        errors.push("Please fill in all fields");
-    }
+    dataHelper.getAllCategories()
+        .then(categories => {
+            if (itemName == "" || drinkPrice == "" || drinkDesc == "" || drinkCat == "" || drinkBest == "") {
+                errors.push("Please fill in all fields");
+            }
 
-    if (!req.file) {
-        errors.push("No file received or invalid image file type");
-    }
+            if (!req.file) {
+                errors.push("No file received or invalid image file type");
+            }
 
-    for (let i = 0; i < categories.length; i++) {
-        if (categories[i].name == drinkCat) {
-            categories[i].selected = true;
-        }
-    }
+            for (let i = 0; i < categories.length; i++) {
+                if (categories[i].name == drinkCat) {
+                    categories[i].selected = true;
+                }
+            }
 
-    if (drinkBest !== '') {
-        if (drinkBest === "true") {
-            topdrink = true;
-            unhide = true;
-        } else {
-            topdrink = false;
-            unhide = true;
-        }
-    }
+            if (drinkBest !== '') {
+                if (drinkBest === "true") {
+                    topdrink = true;
+                    unhide = true;
+                } else {
+                    topdrink = false;
+                    unhide = true;
+                }
+            }
 
-    if (errors.length > 0) {
-        res.render('addDrink', {
-            title: 'Drink',
-            errorMessages: errors,
-            categories: categories,
-            topdrink: topdrink,
-            drinkName: itemName,
-            drinkPrice: drinkPrice,
-            drinkDesc: drinkDesc,
-            drinkCat: drinkCat,
-            drinkBest: drinkBest,
-            unhide: unhide,
-            userId: (users.length !== 0) ? users[0].email : req.session.userId,
-            email: (users.length !== 0) ? users[0].email : '',
-            totalItems: (req.session.cart) ? req.session.cart.length : 0
-        });
-    } else {
-        const drink = new Drink({
-            name: itemName,
-            imgPath: itemName.toLowerCase().replace(/ /, '-') + path.extname(req.file.originalname),
-            description: drinkDesc,
-            category: drinkCat,
-            price: drinkPrice,
-            bestseller: drinkBest,
-            url: itemName.toLowerCase().replace(/ /, '-')
-        });
-
-        drink.save()
-            .then(() => {
-                res.redirect('/manage/drink');
-            })
-            .catch(err => {
+            if (errors.length > 0) {
                 res.render('addDrink', {
                     title: 'Drink',
-                    errorMessages: [err],
+                    errorMessages: errors,
                     categories: categories,
                     topdrink: topdrink,
                     drinkName: itemName,
@@ -216,14 +168,43 @@ router.post('/drink/add', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, uplo
                     drinkDesc: drinkDesc,
                     drinkCat: drinkCat,
                     drinkBest: drinkBest,
-                    unhide: unhide,
-                    drinkImage: req.file.originalname,
-                    userId: (users.length !== 0) ? users[0].email : req.session.userId,
-                    email: (users.length !== 0) ? users[0].email : '',
-                    totalItems: (req.session.cart) ? req.session.cart.length : 0
+                    unhide: unhide
                 });
-            });
-    }
+            } else {
+                const drink = new Drink({
+                    name: itemName,
+                    imgPath: itemName.toLowerCase().replace(/ /g, '-') + path.extname(req.file.originalname),
+                    description: drinkDesc,
+                    category: drinkCat,
+                    price: drinkPrice,
+                    bestseller: drinkBest,
+                    url: itemName.toLowerCase().replace(/ /g, '-')
+                });
+
+                drink.save()
+                    .then(() => {
+                        res.redirect('/manage/drink');
+                    })
+                    .catch(err => {
+                        res.render('addDrink', {
+                            title: 'Drink',
+                            errorMessages: [err],
+                            categories: categories,
+                            topdrink: topdrink,
+                            drinkName: itemName,
+                            drinkPrice: drinkPrice,
+                            drinkDesc: drinkDesc,
+                            drinkCat: drinkCat,
+                            drinkBest: drinkBest,
+                            unhide: unhide,
+                            drinkImage: req.file.originalname
+                        });
+                    });
+            }
+        })
+        .catch(err => {
+            res.status(500).send("Unable to display the page correctly");
+        });
 });
 
 router.get('/category/delete/:category', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, (req, res) => {
@@ -234,11 +215,11 @@ router.get('/category/delete/:category', serviceAuth.verifyLogin, serviceAuth.ve
                     res.redirect('/manage/category');
                 })
                 .catch(err => {
-                    console.log('There is error when delete');
+                    res.status(500).send("Unable to delete drink(s) in the category");
                 });
         })
         .catch(err => {
-            console.log('There is error when delete');
+            res.status(500).send("Unable to delete category");
         });
 });
 
@@ -248,203 +229,131 @@ router.get('/drink/delete/:drink', serviceAuth.verifyLogin, serviceAuth.verifyAd
             res.redirect('/manage/drink');
         })
         .catch(err => {
-            console.log('There is error when delete');
+            res.status(500).send("Unable to delete drink");
         });
 });
 
-router.get('/drink/update/:drink', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, async (req, res) => {
-    let users = await User.find({ email: req.session.userId }).lean();
-    let drink = await Drink.findOne({ url: req.params.drink }).lean();
-    let categories = await Category.find().lean();
-
-    categories.forEach(category => {
-        if (category.name === drink.category) {
-            category.selected = true;
-        }
-    })
-
-    res.render('updateDrink', {
-        title: 'Drink',
-        categories: categories,
-        topdrink: drink.bestseller,
-        drinkName: drink.name,
-        drinkPrice: drink.price,
-        drinkDesc: drink.description,
-        drinkCat: drink.category,
-        drinkBest: drink.bestseller,
-        drinkImage: drink.imgPath,
-        drinkId: drink._id,
-        userId: (users.length !== 0) ? users[0].email : req.session.userId,
-        email: (users.length !== 0) ? users[0].email : '',
-        totalItems: (req.session.cart) ? req.session.cart.length : 0
-    });
+router.get('/drink/update/:drink', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, (req, res) => {
+    let drink;
+    let categories = [];
+    Drink.findOne({ url: req.params.drink }).lean().exec()
+        .then(data => {
+            drink = data;
+        })
+        .catch(err => {
+            console.error(err);
+        })
+        .then(dataHelper.getAllCategories)
+        .then(data => {
+            categories = data;
+            categories.forEach(category => {
+                if (category.name === drink.category) {
+                    category.selected = true;
+                }
+            })
+        })
+        .catch(err => {
+            console.error(err);
+        })
+        .then(() => {
+            res.render('updateDrink', {
+                title: 'Drink',
+                categories: categories,
+                topdrink: drink.bestseller,
+                drinkName: drink.name,
+                drinkPrice: drink.price,
+                drinkDesc: drink.description,
+                drinkCat: drink.category,
+                drinkBest: drink.bestseller,
+                drinkImage: drink.imgPath,
+                drinkId: drink._id
+            });
+        })
+        .catch(err => {
+            res.status(500).send("Unable to display the page correctly");
+        });
 });
 
-router.post('/drink/update', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, upload.single("imageFile"), dataHelper.imageResizer, async (req, res) => {
-    req.body.userAgent = req.get('User-Agent');
-    let users = await User.find({ email: req.session.userId }).lean();
-    let categories = await Category.find().lean();
+router.post('/drink/update', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, upload.single("imageFile"), dataHelper.imageResizer, (req, res) => {
     let topdrink;
     let unhide = false;
     const errors = [];
     const { itemName, drinkPrice, drinkDesc, drinkCat, drinkBest, drinkId, drinkImage } = req.body;
 
-    if (itemName == "" || drinkPrice == "" || drinkDesc == "" || drinkCat == "" || drinkBest == "") {
-        errors.push("Please fill in all fields");
-    }
+    dataHelper.getAllCategories()
+        .then(categories => {
+            if (itemName == "" || drinkPrice == "" || drinkDesc == "" || drinkCat == "" || drinkBest == "") {
+                errors.push("Please fill in all fields");
+            }
 
-    if (!req.file) {
-        errors.push("No file received or invalid image file type");
-    }
+            for (let i = 0; i < categories.length; i++) {
+                if (categories[i].name == drinkCat) {
+                    categories[i].selected = true;
+                }
+            }
 
-    for (let i = 0; i < categories.length; i++) {
-        if (categories[i].name == drinkCat) {
-            categories[i].selected = true;
-        }
-    }
+            if (drinkBest !== '') {
+                if (drinkBest === "true") {
+                    topdrink = true;
+                    unhide = true;
+                } else {
+                    topdrink = false;
+                    unhide = true;
+                }
+            }
 
-    if (drinkBest !== '') {
-        if (drinkBest === "true") {
-            topdrink = true;
-            unhide = true;
-        } else {
-            topdrink = false;
-            unhide = true;
-        }
-    }
+            if (errors.length > 0) {
+                res.render('updateDrink', {
+                    title: 'Update Drink',
+                    errorMessages: errors,
+                    categories: categories,
+                    topdrink: topdrink,
+                    drinkName: itemName,
+                    drinkPrice: drinkPrice,
+                    drinkDesc: drinkDesc,
+                    drinkCat: drinkCat,
+                    drinkBest: drinkBest,
+                    drinkId: drinkId,
+                    drinkImage: drinkImage,
+                    unhide: unhide
+                });
+            } else {
+                let drink = {
+                    name: itemName,
+                    description: drinkDesc,
+                    category: drinkCat,
+                    price: drinkPrice,
+                    bestseller: drinkBest,
+                    url: itemName.toLowerCase().replace(/ /g, '-')
+                }
 
-    if (errors.length > 0) {
-        res.render('updateDrink', {
-            title: 'Update Drink',
-            errorMessages: errors,
-            categories: categories,
-            topdrink: topdrink,
-            drinkName: itemName,
-            drinkPrice: drinkPrice,
-            drinkDesc: drinkDesc,
-            drinkCat: drinkCat,
-            drinkBest: drinkBest,
-            drinkId: drinkId,
-            drinkImage: drinkImage,
-            unhide: unhide,
-            userId: (users.length !== 0) ? users[0].email : req.session.userId,
-            email: (users.length !== 0) ? users[0].email : '',
-            totalItems: (req.session.cart) ? req.session.cart.length : 0
+                if (req.file) {
+                    drink.imgPath = itemName.toLowerCase().replace(/ /g, '-') + path.extname(req.file.originalname);
+                }
+
+                Drink.findByIdAndUpdate(drinkId, drink).then(() => {
+                    res.redirect('/manage/drink');
+                }).catch(err => {
+                    res.render('manageDrink', {
+                        title: 'Update Drink',
+                        errorMessages: [err],
+                        categories: categories,
+                        topdrink: topdrink,
+                        drinkName: itemName,
+                        drinkPrice: drinkPrice,
+                        drinkDesc: drinkDesc,
+                        drinkCat: drinkCat,
+                        drinkBest: drinkBest,
+                        drinkId: drinkId,
+                        drinkImage: drinkImage,
+                        unhide: unhide
+                    });
+                });
+            }
+        })
+        .catch(err => {
+            res.status(500).send("Unable to display the page correctly");
         });
-    } else {
-        let drink = {
-            name: itemName,
-            imgPath: itemName.toLowerCase().replace(/ /, '-') + path.extname(req.file.originalname),
-            description: drinkDesc,
-            category: drinkCat,
-            price: drinkPrice,
-            bestseller: drinkBest,
-            url: itemName.toLowerCase().replace(/ /, '-')
-        }
-
-        Drink.findByIdAndUpdate(drinkId, drink).then(() => {
-            res.redirect('/manage/drink');
-        }).catch(err => {
-            res.render('manageDrink', {
-                title: 'Update Drink',
-                errorMessages: [err],
-                categories: categories,
-                topdrink: topdrink,
-                drinkName: itemName,
-                drinkPrice: drinkPrice,
-                drinkDesc: drinkDesc,
-                drinkCat: drinkCat,
-                drinkBest: drinkBest,
-                drinkId: drinkId,
-                drinkImage: drinkImage,
-                unhide: unhide,
-                userId: (users.length !== 0) ? users[0].email : req.session.userId,
-                email: (users.length !== 0) ? users[0].email : '',
-                totalItems: (req.session.cart) ? req.session.cart.length : 0
-            });
-        });
-    }
-});
-
-router.post('/drink/update-no-image', serviceAuth.verifyLogin, serviceAuth.verifyAdmin, async (req, res) => {
-    req.body.userAgent = req.get('User-Agent');
-    let users = await User.find({ email: req.session.userId }).lean();
-    let categories = await Category.find().lean();
-    let topdrink;
-    let unhide = false;
-    const errors = [];
-    const { itemName, drinkPrice, drinkDesc, drinkCat, drinkBest, drinkId, drinkImage } = req.body;
-
-    if (itemName == "" || drinkPrice == "" || drinkDesc == "" || drinkCat == "" || drinkBest == "") {
-        errors.push("Please fill in all fields");
-    }
-
-    for (let i = 0; i < categories.length; i++) {
-        if (categories[i].name == drinkCat) {
-            categories[i].selected = true;
-        }
-    }
-
-    if (drinkBest !== '') {
-        if (drinkBest === "true") {
-            topdrink = true;
-            unhide = true;
-        } else {
-            topdrink = false;
-            unhide = true;
-        }
-    }
-
-    if (errors.length > 0) {
-        res.render('updateDrink', {
-            title: 'Update Drink',
-            errorMessages: errors,
-            categories: categories,
-            topdrink: topdrink,
-            drinkName: itemName,
-            drinkPrice: drinkPrice,
-            drinkDesc: drinkDesc,
-            drinkCat: drinkCat,
-            drinkBest: drinkBest,
-            drinkId: drinkId,
-            drinkImage: drinkImage,
-            unhide: unhide,
-            userId: (users.length !== 0) ? users[0].email : req.session.userId,
-            email: (users.length !== 0) ? users[0].email : '',
-            totalItems: (req.session.cart) ? req.session.cart.length : 0
-        });
-    } else {
-        let drink = {
-            name: itemName,
-            description: drinkDesc,
-            category: drinkCat,
-            price: drinkPrice,
-            bestseller: drinkBest,
-            url: itemName.toLowerCase().replace(/ /, '-')
-        }
-
-        Drink.findByIdAndUpdate(drinkId, drink).then(() => {
-            res.redirect('/manage/drink');
-        }).catch(err => {
-            res.render('manageDrink', {
-                title: 'Update Drink',
-                errorMessages: [err],
-                categories: categories,
-                topdrink: topdrink,
-                drinkName: itemName,
-                drinkPrice: drinkPrice,
-                drinkDesc: drinkDesc,
-                drinkCat: drinkCat,
-                drinkBest: drinkBest,
-                drinkId: drinkId,
-                drinkImage: drinkImage,
-                unhide: unhide,
-                userId: (users.length !== 0) ? users[0].email : req.session.userId,
-                email: (users.length !== 0) ? users[0].email : '',
-                totalItems: (req.session.cart) ? req.session.cart.length : 0
-            });
-        });
-    }
 });
 
 router.get('/cart/delete/:drinkUrl', serviceAuth.verifyLogin, (req, res) => {

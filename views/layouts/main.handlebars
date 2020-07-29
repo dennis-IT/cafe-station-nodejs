@@ -33,16 +33,16 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/users/cart">
                                 CART
-                                <span class="badge">{{totalItems}}</span>
+                                <span class="badge">{{session.totalNumItems}}</span>
                             </a>
                         </li>
 
-                        {{#if userId}}
+                        {{#if session.userId}}
                         <li class="nav-item">
                             <div class="dropdown show">
                                 <a class="nav-link last dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    {{email}}
+                                    {{session.userId}}
                                 </a>
 
                                 <div class="dropdown-menu mb-2" aria-labelledby="dropdownMenuLink">
@@ -117,7 +117,6 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
         crossorigin="anonymous"></script>
-    <script src="/js/script.js"></script>
 </body>
 
 </html>

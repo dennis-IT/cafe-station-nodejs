@@ -200,7 +200,7 @@ main {
 }
 
 .banner {
-  height: calc(100vh - 3rem);
+  height: calc(100vh - 2.5rem);
   background-image: url(/images/banner.jpg);
   background-position: center;
   background-size: cover;
@@ -211,7 +211,6 @@ main {
   justify-content: center;
   align-items: center;
   text-align: center;
-  /* background-attachment: fixed; */
 }
 
 .banner-title {
