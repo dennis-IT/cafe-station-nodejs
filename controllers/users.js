@@ -24,7 +24,7 @@ router.get('/logout', serviceAuth.verifyLogin, (req, res) => {
             res.redirect('/users/dashboard');
         } else {
             res.clearCookie(process.env.SESSION_NAME);
-            res.redirect('/');
+            res.redirect('/users/login');
         }
     });
 });
