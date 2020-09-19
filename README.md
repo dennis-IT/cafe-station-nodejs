@@ -1,4 +1,2 @@
-# cafe-station-nodejs
-# This is WEB322 Final Project
-# Name: Quang Huy Ta
-# ID:   130346190
+## Website: https://cafe-s.herokuapp.com/
+## Demo website: Built with ExpressJS, Handlebars, MongoDB, Rest API
